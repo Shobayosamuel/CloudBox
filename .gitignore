@@ -1,0 +1,37 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Output and build directories
+bin/
+build/
+dist/
+
+# Dependency directories (optional, if not using Go modules)
+vendor/
+
+# Go module files (optional)
+go.sum
+
+# Testing and debugging
+*.test
+*.out
+*.cover
+
+# IDE and editor configuration files
+# JetBrains IDEs (GoLand, IntelliJ)
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# MacOS files
+.DS_Store
+
+# Windows files
+Thumbs.db
+desktop.ini
