@@ -1,24 +1,33 @@
 package main
 
 import (
-	"CloudBox/controllers"
-	"CloudBox/initializers"
-	"CloudBox/middlewares"
-
-	"github.com/gin-gonic/gin"
+    "github.com/gin-gonic/gin"
+    "CloudBox/controllers"
+    "CloudBox/middlewares"
+    "CloudBox/utils"
 )
 
-func init() {
-	initializers.LoadEnvs()
-	initializers.ConnectDB()
-
-}
-
 func main() {
-	router := gin.Default()
+    // Load env variables
+    utils.LoadEnv()
 
-	router.POST("/auth/signup", controllers.CreateUser)
-	router.POST("/auth/login", controllers.Login)
-	router.GET("/user/profile", middlewares.CheckAuth, controllers.GetUserProfile)
-	router.Run()
+    r := gin.Default()
+
+    // Public routes
+    auth := r.Group("/auth")
+    {
+        auth.POST("/register", controllers.CreateUser)
+        auth.POST("/login", controllers.Login)
+        auth.POST("/refresh", controllers.RefreshToken)
+    }
+
+    // Protected routes
+    protected := r.Group("/api")
+    protected.Use(middlewares.CheckAuth())
+    {
+        protected.GET("/profile", controllers.GetUserProfile)
+        // Add other protected routes here
+    }
+
+    r.Run()
 }

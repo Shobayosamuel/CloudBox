@@ -1,8 +1,10 @@
 package main
 
 import (
+	"log"
 	"CloudBox/initializers"
 	"CloudBox/models"
+	"CloudBox/utils"
 )
 
 func init() {
@@ -12,6 +14,9 @@ func init() {
 }
 
 func main() {
-
-     initializers.DB.AutoMigrate(&models.User{})
+    db := utils.ConnectDB()
+    err := db.AutoMigrate(&models.User{})
+    if err != nil {
+        log.Fatal(err)
+    }
 }
