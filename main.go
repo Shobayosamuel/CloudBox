@@ -26,7 +26,11 @@ func main() {
     protected.Use(middlewares.CheckAuth())
     {
         protected.GET("/profile", controllers.GetUserProfile)
-        // Add other protected routes here
+
+        
+        protected.POST("/files/upload", controllers.UploadFile)
+        protected.GET("/files/list", controllers.ListFiles)
+        protected.GET("/files/download/:id", controllers.DownloadFile)
     }
 
     r.Run()
