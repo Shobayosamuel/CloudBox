@@ -35,3 +35,4 @@ go.sum
 # Windows files
 Thumbs.db
 desktop.ini
+.env
