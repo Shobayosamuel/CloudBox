@@ -1,15 +1,16 @@
 package controllers
 
 import (
-    "CloudBox/models"
-    "CloudBox/utils"
-    "net/http"
-    "time"
+	"CloudBox/models"
+	"CloudBox/utils"
+	"fmt"
+	"net/http"
+	"time"
 
-    "github.com/gin-gonic/gin"
-    "github.com/google/uuid"
-    "github.com/aws/aws-sdk-go/aws"
-    "github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type CreateShareRequest struct {
