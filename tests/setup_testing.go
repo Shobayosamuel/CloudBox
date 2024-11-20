@@ -18,10 +18,12 @@ import (
 
 func main() {
 	// Required environment variables
-	err := godotenv.Load("/home/samuel/Desktop/CloudBox/.env")
-    if err != nil {
-        log.Fatalf("Error loading .env file")
-    }
+	if os.Getenv("ENV") != "production" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatalf("Error loading .env file: %v", err)
+		}
+	}
 	requiredVars := []string{
 		"AWS_REGION",
 		"AWS_BUCKET_NAME",
