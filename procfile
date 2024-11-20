@@ -1,1 +1,1 @@
-web: ./cloudbox-binary
+web: go run main.go
