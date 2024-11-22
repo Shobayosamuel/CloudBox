@@ -17,7 +17,7 @@ func main() {
 
     // CORS
     r.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"*"},
+        AllowOrigins:     []string{"http://localhost:3000", "https://cloudbox-seven.vercel.app/"},
         AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
         AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Refresh-Token"},
         ExposeHeaders:    []string{"Content-Length"},
