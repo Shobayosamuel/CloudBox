@@ -1,6 +1,7 @@
 package main
 
 import (
+    "fmt"
     "os"
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
@@ -16,19 +17,39 @@ func main() {
 
     r := gin.Default()
 
-    // CORS configuration
+    // Detailed CORS configuration
     r.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"https://cloudbox-seven.vercel.app", "http://localhost:3000", "https://floating-sands-93913-0dc409719188.herokuapp.com"},
+        AllowAllOrigins:  true, // Temporarily allow all origins
         AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
-        AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Refresh-Token"},
+        AllowHeaders:     []string{
+            "Origin",
+            "Content-Length",
+            "Content-Type",
+            "Authorization",
+            "Refresh-Token",
+            "Accept",
+        },
         ExposeHeaders:    []string{"Content-Length"},
         AllowCredentials: true,
         MaxAge:           12 * time.Hour,
     }))
 
+    // Logging middleware for debugging
+    r.Use(func(c *gin.Context) {
+        fmt.Printf("Request Origin: %s\n", c.GetHeader("Origin"))
+        fmt.Printf("Request Method: %s\n", c.Request.Method)
+        c.Next()
+    })
+
     // Public routes
     auth := r.Group("/auth")
     {
+        auth.OPTIONS("/register", func(c *gin.Context) {
+            c.Header("Access-Control-Allow-Origin", "*")
+            c.Header("Access-Control-Allow-Methods", "POST, OPTIONS")
+            c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+            c.Status(200)
+        })
         auth.POST("/register", controllers.CreateUser)
         auth.POST("/login", controllers.Login)
         auth.POST("/refresh", controllers.RefreshToken)
@@ -49,5 +70,6 @@ func main() {
     if port == "" {
         port = "8080"
     }
+    fmt.Printf("Server starting on port %s\n", port)
     r.Run(":" + port)
 }
