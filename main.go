@@ -1,6 +1,7 @@
 package main
 
 import (
+    "os"
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
     "CloudBox/controllers"
@@ -15,9 +16,9 @@ func main() {
 
     r := gin.Default()
 
-    // CORS
+    // CORS configuration
     r.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"https://cloudbox-seven.vercel.app", "http://localhost:3000"},
+        AllowOrigins:     []string{"https://cloudbox-seven.vercel.app", "http://localhost:3000", "https://floating-sands-93913-0dc409719188.herokuapp.com"},
         AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
         AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Refresh-Token"},
         ExposeHeaders:    []string{"Content-Length"},
@@ -43,5 +44,10 @@ func main() {
         protected.GET("/files/download/:id", controllers.DownloadFile)
     }
 
-    r.Run()
+    // Use port from environment variable
+    port := os.Getenv("PORT")
+    if port == "" {
+        port = "8080"
+    }
+    r.Run(":" + port)
 }
