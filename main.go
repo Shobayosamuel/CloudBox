@@ -17,12 +17,12 @@ func main() {
 
     // CORS
     r.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"*"},
+        AllowOrigins:     []string{"https://cloudbox-seven.vercel.app", "http://localhost:3000"},
         AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
         AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Refresh-Token"},
         ExposeHeaders:    []string{"Content-Length"},
         AllowCredentials: true,
-        MaxAge:          12 * time.Hour,
+        MaxAge:           12 * time.Hour,
     }))
 
     // Public routes
@@ -38,8 +38,6 @@ func main() {
     protected.Use(middlewares.CheckAuth())
     {
         protected.GET("/profile", controllers.GetUserProfile)
-
-
         protected.POST("/files/upload", controllers.UploadFile)
         protected.GET("/files/list", controllers.ListFiles)
         protected.GET("/files/download/:id", controllers.DownloadFile)
