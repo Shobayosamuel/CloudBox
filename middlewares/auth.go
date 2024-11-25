@@ -47,13 +47,20 @@ func CheckAuth() gin.HandlerFunc {
                 return
             }
 
+            userID, ok := claims["user_id"].(float64)
+            if !ok {
+                c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid user ID in token"})
+                return
+            }
+
             var user models.User
-            if err := db.First(&user, claims["user_id"]).Error; err != nil {
+            if err := db.First(&user, uint(userID)).Error; err != nil {
                 c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
                 return
             }
 
             c.Set("currentUser", user)
+            c.Set("userID", uint(userID))
             c.Next()
         } else {
             c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token claims"})

@@ -211,6 +211,7 @@ func RefreshToken(c *gin.Context) {
 
 func GetUserProfile(c *gin.Context) {
     userID, exists := c.Get("userID")
+    fmt.Println(userID)
     if !exists {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "user not authenticated"})
         return

@@ -15,7 +15,7 @@ func init() {
 
 func main() {
     db := utils.ConnectDB()
-    err := db.AutoMigrate(&models.User{})
+    err := db.AutoMigrate(&models.User{}, &models.File{})
     if err != nil {
         log.Fatal(err)
     }

@@ -1,14 +1,16 @@
 package main
 
 import (
-    "fmt"
-    "os"
-    "github.com/gin-gonic/gin"
-    "github.com/gin-contrib/cors"
     "CloudBox/controllers"
     "CloudBox/middlewares"
     "CloudBox/utils"
+    "fmt"
+    "os"
     "time"
+    "net/http"
+
+    "github.com/gin-contrib/cors"
+    "github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -17,39 +19,36 @@ func main() {
 
     r := gin.Default()
 
-    // Detailed CORS configuration
-    r.Use(cors.New(cors.Config{
-        AllowAllOrigins:  true, // Temporarily allow all origins
+    // CORS configuration
+    config := cors.Config{
+        AllowOrigins:     []string{"http://localhost:3000"},
         AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
-        AllowHeaders:     []string{
-            "Origin",
-            "Content-Length",
-            "Content-Type",
-            "Authorization",
-            "Refresh-Token",
-            "Accept",
-        },
+        AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Refresh-Token", "Accept"},
         ExposeHeaders:    []string{"Content-Length"},
         AllowCredentials: true,
-        MaxAge:           12 * time.Hour,
-    }))
+        MaxAge:          12 * time.Hour,
+    }
+
+    // Add CORS middleware
+    r.Use(cors.New(config))
+
+    // Add OPTIONS handler for all routes
+    r.OPTIONS("/*path", func(c *gin.Context) {
+        c.Header("Access-Control-Allow-Origin", "http://localhost:3000")
+        c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS")
+        c.Header("Access-Control-Allow-Headers", "Origin, Content-Length, Content-Type, Authorization, Refresh-Token, Accept")
+        c.Header("Access-Control-Allow-Credentials", "true")
+        c.Status(http.StatusOK)
+    })
 
     // Logging middleware for debugging
     r.Use(func(c *gin.Context) {
-        fmt.Printf("Request Origin: %s\n", c.GetHeader("Origin"))
-        fmt.Printf("Request Method: %s\n", c.Request.Method)
         c.Next()
     })
 
     // Public routes
     auth := r.Group("/auth")
     {
-        auth.OPTIONS("/register", func(c *gin.Context) {
-            c.Header("Access-Control-Allow-Origin", "*")
-            c.Header("Access-Control-Allow-Methods", "POST, OPTIONS")
-            c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization")
-            c.Status(200)
-        })
         auth.POST("/register", controllers.CreateUser)
         auth.POST("/login", controllers.Login)
         auth.POST("/refresh", controllers.RefreshToken)
@@ -70,6 +69,7 @@ func main() {
     if port == "" {
         port = "8080"
     }
+
     fmt.Printf("Server starting on port %s\n", port)
     r.Run(":" + port)
 }
